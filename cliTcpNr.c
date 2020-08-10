@@ -192,6 +192,7 @@ int welcome(int sd)
     }
     else
     {
+      printf("a=%d",a);
       switch (a)
       {
       case 1:
@@ -207,10 +208,10 @@ int welcome(int sd)
         printf("See ya!\n");
         close(sd);
         break;
-      case -1:
-        a = -1;
-        printf("Nu exista o astfel de comanda.\n");
+      default:
+        printf("Eroare server.\n");
         close(sd);
+        a=-1;
         break;
       }
     }
@@ -264,5 +265,6 @@ int main(int argc, char *argv[])
     a=welcome(sd);
     printf("a=%d",a);
   }
+  printf("MAIN:am iesit");
   close(sd);
 }

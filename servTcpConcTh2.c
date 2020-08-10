@@ -37,7 +37,7 @@ int parsezComanda(char a[30])
 {
   if (strcmp(a, "login") == 0)
     return 1;
-  if (strcmp(a, "iesire") == 0)
+  if (strcmp(a, "exit") == 0)
     return 0;
   if (strcmp(a, "inregistrare") == 0)
     return 2;
@@ -260,8 +260,10 @@ int registration(struct thData sd)
 int welcome(struct thData sd)
 {
   printf("Astept comanda:\n");
-  char comanda[30];
+  char comanda[30]="";
+  int a,b;
   fflush(stdout);
+  bzero(comanda,30);
   if (read(sd.cl, &comanda, sizeof(comanda)) <= 0)
   {
     printf("Eroare la citire de la client.\n");
@@ -269,19 +271,21 @@ int welcome(struct thData sd)
   }
   else
   {
-    int a = parsezComanda(comanda);
-    printf("Ati introdus comanda %s\n",comanda);
-    if (write(sd.cl,&a, sizeof(int)) <= 0)
+    a = parsezComanda(comanda);
+    printf("Ati introdus comanda %s, cod %ls\n",comanda,&a);
+    if (b=write(sd.cl, &a , 4) <= 0)
     {
       perror("Eroare la scriere catre client.\n");
       return errno;
     }
     else{
+      printf("b=%d",b);
       switch (a)
       {
       case 0:
         printf("Clientul %d s-a deconectat.\n", sd.idThread);
-        close(sd.cl);
+        a=0;
+        //close(sd.cl);
         break;
       case 1:
         a = login(sd);
@@ -289,16 +293,21 @@ int welcome(struct thData sd)
       case 2:
         a = registration(sd);
         break;
+      default:
+        printf("[server]Eroare la parsarea comenzii %s, client %d", comanda, sd.idThread);
+        a=-1;
+        //close(sd.cl);
+        return errno; break;
       }
     }
-    if (a < 0)
-    {
-      printf("[server]Eroare la parsarea comenzii %s, client %d", comanda, sd.idThread);
-      close(sd.cl);
-      return errno;
-    }
+    // if (a < 0)
+    // {
+    //   printf("[server]Eroare la parsarea comenzii %s, client %d", comanda, sd.idThread);
+    //   close(sd.cl);
+    //   return errno;
+    // }
   }
-  return 1;
+  return a;
 }
 
 static void *treat(void *); /* functia executata de fiecare thread ce realizeaza comunicarea cu clientii */
