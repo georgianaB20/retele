@@ -18,6 +18,7 @@
 #include <signal.h>
 #include <pthread.h>
 #include <fcntl.h>
+#include <arpa/inet.h>
 
 /* portul folosit */
 #define PORT 2908
@@ -51,6 +52,9 @@ void parseaza(thData tdL,int cod){
 }
 
 void login(thData tdL){
+  //verificam daca userul este logat
+    if(strlen(tdL.client->name)>0 && strlen(tdL.client->password)>0) {return;}
+    
     char username[30],parola[30];
     bzero(username,30);
     if(read(tdL.cl,username,30)<=0){
@@ -65,8 +69,9 @@ void login(thData tdL){
 
     //VERIFICARE + RASPUNS
     getUser(tdL,username,parola);
-    printf("%s %s\n",tdL.client->name,tdL.client->password);
-    if( tdL.client->name != NULL)
+    //printf("%s %s\n",tdL.client->name,tdL.client->password);
+    if( tdL.client->name != NULL && tdL.client->password != NULL)
+      if(strcmp(tdL.client->name,username)==0 && strcmp(tdL.client->password,parola)==0)
         {
           if(write(tdL.cl,"ok",10)<=0) {perror ("[server]Eroare la write() catre client.\n"); return;}
           else //userMenu(tdL);
@@ -130,7 +135,7 @@ void getUser(thData tdL,char username[30],char password[30]){
 void sendUser(thData tdL){
    char name[30],password[30];
    fflush(stdout);
-   printf("name: %s\n",tdL.client->name);
+   //printf("name: %s\n",tdL.client->name);
    strcpy(name,tdL.client->name);
    strcpy(password,tdL.client->password);
 
