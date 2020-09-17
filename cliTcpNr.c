@@ -12,12 +12,19 @@
 #include <stdlib.h>
 #include <netdb.h>
 #include <string.h>
+#include <arpa/inet.h>
 
 /* codul de eroare returnat de anumite apeluri */
 extern int errno;
 
+typedef struct user{
+    char name[30];
+    char password[30];
+}user;
+
 /* portul de conectare la server*/
 int port;
+struct user* usr;
 void welcome(int sd);
 void login(int sd);
 void parseaza(int sd,int cod);
@@ -43,11 +50,19 @@ void getUser(int sd){
     perror ("Eroare la read() de la server.\n");
     return;
   }
-
-  printf("username: %s\nparola: %s\n",name,password);
+  if(strlen(name)==0 && strlen(password)==0)
+    printf("Nu sunteti logat.\n");
+  else
+    printf("username: %s\nparola: %s\n",name,password);
 }
 
 void login(int sd){
+  printf("%ld %ld",strlen(usr->name),strlen(usr->password));
+    if(strlen(usr->name)>0 && strlen(usr->password)>0){
+      printf("Sunteti deja logat ca : %s",usr->name);
+      return;
+    }
+    else{
     char username[30],parola[30],rasp[10];
 
     printf("id: ");
@@ -69,12 +84,15 @@ void login(int sd){
 
     if(strcmp("ok",rasp) == 0){
       printf("Te-ai logat. Yey\n");
+      strcpy(usr->name,username);
+      strcpy(usr->password,parola);
       //userMenu(sd);
     }
     else if(strcmp("not ok",rasp) == 0)
       printf("Nu te-ai logat..Pff\n");
     else
-      printf("Eroare cv idk..%s\n",rasp);   
+      printf("Eroare cv idk..%s\n",rasp);  
+    } //else
 
 }
 
@@ -145,6 +163,7 @@ int main (int argc, char *argv[])
     }
 
     //incepem comunicarea cu serverul
+  usr=(struct user*)malloc(sizeof(struct user));
   welcome(sd);
 
   /* inchidem conexiunea, am terminat */
