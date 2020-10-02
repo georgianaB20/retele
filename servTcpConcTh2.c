@@ -60,12 +60,12 @@ typedef struct song{
 static void *treat(void *); /* functia executata de fiecare thread ce realizeaza comunicarea cu clientii */
 void raspunde(void *);
 void welcome(thData tdL);
-void parseaza(thData tdL, int cod,char from[10]);
-void login(thData tdL);
+int parseaza(thData tdL, int cod,char from[10]);
+int login(thData tdL);
 char* getUser(thData tdL, char username[30], char password[30]);
-void sendUser(thData tdL);
-void inregistrare(thData tdL);
-void adaugaAdmin(thData tdL);
+int sendUser(thData tdL);
+int inregistrare(thData tdL);
+int adaugaAdmin(thData tdL);
 
 MYSQL *getConnection()
 {
@@ -192,34 +192,35 @@ char *getUser(thData tdL,char username[30],char password[30]){
 
 }
 
-void parseaza(thData tdL, int cod,char from[10])
+int parseaza(thData tdL, int cod,char from[10])
 {
+  printf("cod %d , %ls\n",cod, &cod);
   if(strcmp(from,"userMenu")==0)
   //tratam comenzile din userMenu
   {
     if(tdL.client->admin==1){
-      if (cod == 1) sendUser(tdL);
-      else if (cod == 2) adaugaAdmin(tdL);
-      else return;
+      if (cod == 1) return sendUser(tdL);
+      else if (cod == 2) return adaugaAdmin(tdL);
+      else {printf("Cod gresit %d",cod); return 0;}
     }
     else
     {
-      if (cod == 1) sendUser(tdL);
-      else return;
+      if (cod == 1) return sendUser(tdL);
+      else {printf("Cod gresit %d",cod); return 0;}
     }
     
   }
   else if(strcmp(from,"welcome")==0)
   //tratam comenzile din welcome
   {
-    if(cod == 1) login(tdL);
-    else if (cod == 2) inregistrare(tdL);
-    else return;    
+    if(cod == 1) return login(tdL);
+    else if (cod == 2) return inregistrare(tdL);
+    else {printf("Cod gresit %d",cod);  return 0;}   
   }
 
 }
 
-void userMenu(thData tdL){
+int userMenu(thData tdL){
   int nr;
   while (1)
   {
@@ -239,16 +240,17 @@ void userMenu(thData tdL){
       break;
     }
     else
-      parseaza(tdL, nr,"userMenu");
+      nr=parseaza(tdL, nr,"userMenu");
   }
+  return nr;
 }
 
-void login(thData tdL)
+int login(thData tdL)
 {
   //verificam daca userul este logat
   if (strlen(tdL.client->name) > 0 && strlen(tdL.client->password) > 0)
   {
-    return;
+    return 0;
   }
 
   char username[30], parola[30];
@@ -256,13 +258,13 @@ void login(thData tdL)
   if (read(tdL.cl, username, 30) <= 0)
   {
     perror("[server]Eroare la read() de la client.\n");
-    return;
+    return 0;
   }
   bzero(parola, 30);
   if (read(tdL.cl, parola, 30) <= 0)
   {
     perror("[server]Eroare la read() de la client.\n");
-    return;
+    return 0;
   }
   printf("[Thread %d]Login: %s. Verificam...\n", tdL.idThread, username);
   fflush(stdout);
@@ -272,7 +274,7 @@ void login(thData tdL)
   if (write(tdL.cl, mesaj, 50) <= 0)
   {
     perror("[server]Eroare la write() catre client.\n");
-    return;
+    return 0;
   }
   else {
     printf("[Thread %d]Userul %s s-a logat\n",tdL.idThread, tdL.client->name);
@@ -280,24 +282,24 @@ void login(thData tdL)
     if(write(tdL.cl,&tdL.client->admin,sizeof(int)) <=0 )
     {
     perror("[server]Eroare la read() de la client.\n");
-    return;
+    return 0;
     }
 
     if(write(tdL.cl,&tdL.client->vote,sizeof(int)) <=0 )
     {
     perror("[server]Eroare la read() de la client.\n");
-    return;
+    return 0;
     }
 
-    userMenu(tdL);
+    return userMenu(tdL);
   }
   fflush(stdout); 
 }
 
-void inregistrare(thData tdL){
+int inregistrare(thData tdL){
   if (strlen(tdL.client->name) > 0 && strlen(tdL.client->password) > 0)
   {
-    return;
+    return 0;
   }
 
   char username[30], parola[30];
@@ -305,13 +307,13 @@ void inregistrare(thData tdL){
   if (read(tdL.cl, username, 30) <= 0)
   {
     perror("[server]Eroare la read() de la client.\n");
-    return;
+    return 0;
   }
   bzero(parola, 30);
   if (read(tdL.cl, parola, 30) <= 0)
   {
     perror("[server]Eroare la read() de la client.\n");
-    return;
+    return 0;
   }
   printf("[Thread %d]Inregistrare: %s\n", tdL.idThread, username);
   fflush(stdout);
@@ -320,22 +322,23 @@ void inregistrare(thData tdL){
   if (write(tdL.cl, mesaj, 50) <= 0)
       {
         perror("[server]Eroare la write() catre client.\n");
-        return;
+        return 0;
       }
   else
       printf("[Thread %d]Userul %s s-a inregistrat.\n",tdL.idThread, username);
   
   fflush(stdout);
+  return 2;
 
 }
 
-void adaugaAdmin(thData tdL){
+int adaugaAdmin(thData tdL){
   //update Users set admin=1 where username like '';
   //verificam daca userul este logat
   if (strlen(tdL.client->name) <= 0 && strlen(tdL.client->password) <= 0)
   {
     printf("[Thread %d]Accesare eronata pentru adaugare admin!\n",tdL.idThread);
-    return;
+    return 0;
   }
 
   char username[30], parola[30];
@@ -344,22 +347,23 @@ void adaugaAdmin(thData tdL){
   if (read(tdL.cl, username, 30) <= 0)
   {
     perror("[server]Eroare la read() de la client.\n");
-    return;
+    return 0;
   }
 
   char* mesaj=newAdmin(username);
   if (write(tdL.cl, mesaj, 50) <= 0)
       {
         perror("[server]Eroare la write() catre client.\n");
-        return;
+        return 0;
       }
   else
       printf("[Thread %d] Userul %s a fost promovat admin de catre %s.", tdL.idThread,username,tdL.client->name);
 
   fflush(stdout);
+  return 2;
 }
 
-void sendUser(thData tdL)
+int sendUser(thData tdL)
 {
   char name[30], password[30];
   printf("[Thread %d]Solicitare date: %s\n",tdL.idThread,tdL.client->name);
@@ -370,27 +374,28 @@ void sendUser(thData tdL)
   if (write(tdL.cl, &name, 30) <= 0)
   {
     perror("[client]Eroare la write() spre client.\n");
-    return;
+    return 0;
   }
 
   if (write(tdL.cl, &password, 30) <= 0)
   {
     perror("[client]Eroare la write() spre client.\n");
-    return;
+    return 0;
   }
   
   if (write(tdL.cl, &tdL.client->vote, sizeof(int)) <= 0)
   {
     perror("[client]Eroare la write() spre client.\n");
-    return;
+    return 0;
   }
 
   if (write(tdL.cl, &tdL.client->admin, sizeof(int)) <= 0)
   {
     perror("[client]Eroare la write() spre client.\n");
-    return;
+    return 0;
   }
   //printf("Am trimis\n");
+  return 1;
 }
 void welcome(thData tdL)
 {
@@ -404,16 +409,15 @@ void welcome(thData tdL)
       break;
     }
     //printf ("[Thread %d]Mesajul a fost receptionat...%d\n",tdL.idThread, nr);
-
+    printf("%d\n",nr);
     if (nr == 0)
     {
       printf("[Thread %d]S-a deconectat...\n", tdL.idThread);
-      free(tdL.client);
       fflush(stdout);
       break;
     }
     else
-      parseaza(tdL, nr,"welcome");
+      nr=parseaza(tdL, nr,"welcome");
   }
 }
 
@@ -513,4 +517,5 @@ void raspunde(void *arg)
   tdL = *((struct thData *)arg);
 
   welcome(tdL);
+  free(tdL.client);
 }
