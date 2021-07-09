@@ -31,6 +31,7 @@ extern int errno;
 char parola_db[30];
 char database[30];
 
+
 typedef struct thData
 {
 	int idThread; //id-ul thread-ului tinut in evidenta de acest program
