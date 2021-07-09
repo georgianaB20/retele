@@ -28,8 +28,9 @@
 /* codul de eroare returnat de anumite apeluri */
 extern int errno;
 
-char* parola_db="your_password";
-char* database="your_database";
+char parola_db[30];
+char database[30];
+
 
 typedef struct thData
 {
@@ -87,6 +88,36 @@ char *adaugaVot(thData tdL, float vot, int song_id);
 char *adaugaComentariu(thData tdL, char comentariu[100], int song_id);
 char *deleteSong(char name[30], char artist[30]);
 void deleteSong_C(thData tdL);
+
+void set_sensitive_data(){
+	FILE * fp;
+    char * line = NULL;
+    size_t len = 0;
+    ssize_t read;
+
+    fp = fopen("./data.txt", "r");
+    if (fp == NULL)
+        exit(EXIT_FAILURE);
+
+    while ((read = getline(&line, &len, fp)) != -1) {
+        // printf("Retrieved line of length %zu:\n", read);
+        // printf("%s", line);
+		char* key=strtok(line,"=");
+		char* value=strtok(NULL,"=");
+		// printf("%s %s",key,value);
+		if(strcmp(key,"password")==0){
+			strcpy(parola_db,value);
+		}else if(strcmp(key,"database")==0){
+			strcpy(database,value);
+		}
+    }
+	printf("parola: %s\ndatabase: %s\n",parola_db,database);
+
+    fclose(fp);
+    if (line)
+        free(line);
+    // exit(EXIT_SUCCESS);
+}
 
 MYSQL *getConnection()
 {
@@ -1418,6 +1449,7 @@ void welcome(thData tdL)
 
 int main()
 {
+	set_sensitive_data();
 	struct sockaddr_in server; // structura folosita de server
 	struct sockaddr_in from;
 	int nr; //mesajul primit de trimis la client

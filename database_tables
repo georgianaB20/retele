@@ -1,0 +1,41 @@
+CREATE TABLE `Comments` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `song_id` int NOT NULL,
+  `username` varchar(30) NOT NULL,
+  `comment` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`)
+);
+
+CREATE TABLE `Genres` (
+  `song_id` int NOT NULL,
+  `genre` varchar(30) NOT NULL,
+  PRIMARY KEY (`song_id`,`genre`),
+  CONSTRAINT `Genres_ibfk_1_Cascade` FOREIGN KEY (`song_id`) REFERENCES `Songs` (`id`) ON DELETE CASCADE
+);
+
+CREATE TABLE `Songs` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) DEFAULT NULL,
+  `artist` varchar(50) NOT NULL,
+  `link` varchar(100) NOT NULL,
+  `description` varchar(250) DEFAULT 'No description available',
+  PRIMARY KEY (`id`)
+);
+
+CREATE TABLE `Users` (
+  `username` varchar(30) NOT NULL,
+  `password` varchar(30) NOT NULL,
+  `admin` int DEFAULT '0',
+  `vote` int DEFAULT '1',
+  PRIMARY KEY (`username`)
+);
+
+CREATE TABLE `Votes` (
+  `song_id` int NOT NULL,
+  `username` varchar(30) NOT NULL,
+  `value` int NOT NULL,
+  PRIMARY KEY (`song_id`,`username`),
+  KEY `Votes_ibfk_2_Cascade` (`username`),
+  CONSTRAINT `Votes_ibfk_1_Cascade` FOREIGN KEY (`song_id`) REFERENCES `Songs` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `Votes_ibfk_2_Cascade` FOREIGN KEY (`username`) REFERENCES `Users` (`username`) ON DELETE CASCADE
+);
