@@ -28,6 +28,9 @@
 /* codul de eroare returnat de anumite apeluri */
 extern int errno;
 
+char* parola_db="your_password";
+char* database="your_database";
+
 typedef struct thData
 {
 	int idThread; //id-ul thread-ului tinut in evidenta de acest program
@@ -93,7 +96,7 @@ MYSQL *getConnection()
 		fprintf(stderr, "%s\n", mysql_error(conn));
 		exit(1);
 	}
-	if (mysql_real_connect(conn, "localhost", "root", "elefant.2004", "proiect", 0, NULL, 0) == NULL)
+	if (mysql_real_connect(conn, "localhost", "root", parola_db, database, 0, NULL, 0) == NULL)
 	{
 		fprintf(stderr, "Am dat peste o eroare: %s\n", mysql_error(conn));
 		mysql_close(conn);
