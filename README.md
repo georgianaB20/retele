@@ -7,18 +7,20 @@
 ## FIRST RUN:
 #### 1. create the DB environment
 Open a new terminal and execute an update :
->sudo apt-get update
+
+	>sudo apt-get update
 Install mysql on your computer. After running the first command you will be required to choose the password of the root user in mysql:
->sudo apt-get install mysql-server			//installing mysql
->sudo service mysql start				//starting the database
->mysql -u root -p					//login with root user
->Enter password: <root_password> 			//write here the password you chose when installing the database, at command #2)
+
+	>sudo apt-get install mysql-server			//installing mysql
+	>sudo service mysql start				//starting the database
+	>mysql -u root -p					//login with root user
+	>Enter password: <root_password> 			//write here the password you chose when installing the database, at command #2)
 After this step the mysql terminal(mysql>) should be ready to use.
 
 Create a new database:
          
 	mysql>show databases;
-        mysql>create database <my_database>;
+	mysql>create database <my_database>;
 
 Create all the tables using the "database_tables" file:
          
@@ -34,23 +36,25 @@ In this file write the following pairs :
  For example: 
  
 	password=thepassword123
-    	database=project_database
+    database=project_database
 
 #### 3. compile in terminal the client and server using the command : ./cr.sh
 #### 4. run:
-
-	./serv.o		//to start the server
-    	./cli.o			//to start the client
+```bash
+./serv.o		//to start the server
+./cli.o			//to start the client
+```
 
 ## RUN THE PROJECT:
 1. start mysql database:
 
     	sudo service mysql start
 2. run:
+```bash
+./serv.o		//to start the server
+./cli.o			//to start the client
+```
 
-	./serv.o		//to start the server
-	./cli.o			//to start the client
-		
 ## USING THE DATABASE:
 To make sure that the database is running, execute in terminal the command:
 		
