@@ -13,20 +13,20 @@ Useful commands:
 FIRST RUN:
 1. create the DB environment
     - install mysql on your computer: 
-        >sudo apt-get update
-        >sudo apt-get install mysql-server (here you will choose the password for the "root" user)
-        >sudo service mysql start
-        >mysql -u root -p
-        >Enter password: <root_password> (write here the password you chose when installing, at command #2)
+        ~ >sudo apt-get update
+        ~ >sudo apt-get install mysql-server (here you will choose the password for the "root" user)
+        ~ >sudo service mysql start
+        ~ >mysql -u root -p
+        ~ >Enter password: <root_password> (write here the password you chose when installing, at command #2)
         After this step the mysql terminal(mysql>) should be ready to use.
     - create a new database:
-         mysql>show databases;
-         mysql>create database <my_database>;
+         ~ mysql>show databases;
+         ~ mysql>create database <my_database>;
          
     - create all the tables using the "database_tables" file:
-         mysql>use <my_database>
+         ~ mysql>use <my_database>
          Now you can create the tables for the project. Copy and paste in the mysql terminal all the "Create Table"-statements in "database_tables" file
-         mysql> create table...
+         ~ mysql> create table...
 2. create in the main directory a file "data.txt"
     In this file write the following pairs :
     password=<root_password>
