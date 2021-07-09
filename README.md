@@ -5,7 +5,7 @@
 
 
 ## FIRST RUN:
-#### 1. create the DB environment
+#### 1. Create the DB environment
 Open a new terminal and execute an update :
 
 	>sudo apt-get update
@@ -22,13 +22,13 @@ Create a new database:
 	mysql>show databases;
 	mysql>create database <my_database>;
 
-Create all the tables using the "database_tables" file:
+Select the database you just created:
          
-	mysql>use <my_database>
+	mysql>use <my_database>;
  Now you can create the tables for the project. Copy and paste in the mysql terminal all the "Create Table"-statements in "database_tables" file
          
 	mysql> create table...
-#### 2. create in the main directory a file "data.txt"
+#### 2. Create in the main directory a file "data.txt"
 In this file write the following pairs :
     
 	password=<root_password>
@@ -38,18 +38,20 @@ In this file write the following pairs :
 	password=thepassword123
     database=project_database
 
-#### 3. compile in terminal the client and server using the command : ./cr.sh
-#### 4. run:
+#### 3. Compile in terminal the client and server using the command : ./cr.sh
+#### 4. Run:
 ```bash
 ./serv.o		//to start the server
 ./cli.o			//to start the client
 ```
 
 ## RUN THE PROJECT:
-1. start mysql database:
+1. Start mysql database:
+```bash
+sudo service mysql start
+```
 
-    	sudo service mysql start
-2. run:
+2. Run:
 ```bash
 ./serv.o		//to start the server
 ./cli.o			//to start the client
